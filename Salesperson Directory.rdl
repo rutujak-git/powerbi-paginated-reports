@@ -1,0 +1,665 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report MustUnderstand="df" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner" xmlns:cl="http://schemas.microsoft.com/sqlserver/reporting/2010/01/componentdefinition" xmlns:df="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition/defaultfontfamily" xmlns:am="http://schemas.microsoft.com/sqlserver/reporting/authoringmetadata">
+  <rd:ReportUnitType>Inch</rd:ReportUnitType>
+  <rd:ReportID>25758d4f-bf4c-4e70-b90b-5e5240b28f6c</rd:ReportID>
+  <am:AuthoringMetadata>
+    <am:CreatedBy>
+      <am:Name>PBIRB</am:Name>
+      <am:Version>15.7.1819.28</am:Version>
+    </am:CreatedBy>
+    <am:UpdatedBy>
+      <am:Name>PBIRB</am:Name>
+      <am:Version>15.7.1819.28</am:Version>
+    </am:UpdatedBy>
+    <am:LastModifiedTimestamp>2026-07-27T17:33:34.6879579Z</am:LastModifiedTimestamp>
+  </am:AuthoringMetadata>
+  <df:DefaultFontFamily>Segoe UI</df:DefaultFontFamily>
+  <AutoRefresh>0</AutoRefresh>
+  <DataSources>
+    <DataSource Name="AdventureWorksDW2019">
+      <rd:SecurityType>None</rd:SecurityType>
+      <ConnectionProperties>
+        <DataProvider>SQLAZURE</DataProvider>
+        <ConnectString>Data Source=sql-smartmetering.database.windows.net;Initial Catalog=AdventureWorksDW2019;Encrypt=True;Trust Server Certificate=True;Authentication=ActiveDirectoryInteractive</ConnectString>
+      </ConnectionProperties>
+      <rd:DataSourceID>f974c479-1667-4ea2-ba31-347ac950c0b4</rd:DataSourceID>
+    </DataSource>
+  </DataSources>
+  <DataSets>
+    <DataSet Name="dsMain">
+      <Query>
+        <DataSourceName>AdventureWorksDW2019</DataSourceName>
+        <QueryParameters>
+          <QueryParameter Name="@EmployeeKey">
+            <Value>=Parameters!EmployeeKey.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@SalesTerritoryGroup">
+            <Value>=Parameters!SalesTerritoryGroup.Value</Value>
+          </QueryParameter>
+        </QueryParameters>
+        <rd:DesignerState>
+          <QueryDefinition xmlns="http://schemas.microsoft.com/ReportingServices/QueryDefinition/Relational">
+            <SelectedColumns>
+              <ColumnExpression ColumnOwner="DimEmployee" ColumnName="FirstName" />
+              <ColumnExpression ColumnOwner="DimEmployee" ColumnName="LastName" />
+              <ColumnExpression ColumnOwner="DimEmployee" ColumnName="Title" />
+              <ColumnExpression ColumnOwner="DimEmployee" ColumnName="EmailAddress" />
+              <ColumnExpression ColumnOwner="DimEmployee" ColumnName="Phone" />
+              <ColumnExpression ColumnOwner="DimEmployee" ColumnName="EmployeePhoto" />
+              <ColumnExpression ColumnOwner="DimSalesTerritory" ColumnName="SalesTerritoryRegion" />
+              <ColumnExpression ColumnOwner="DimSalesTerritory" ColumnName="SalesTerritoryGroup" />
+            </SelectedColumns>
+            <Joins>
+              <Join Type="CROSS JOIN" ColumnOwner="DimSalesTerritory" />
+              <Join Type="INNER JOIN" ColumnOwner="DimEmployee">
+                <On>
+                  <From ColumnOwner="DimSalesTerritory" ColumnName="SalesTerritoryKey" />
+                  <To ColumnOwner="DimEmployee" ColumnName="SalesTerritoryKey" />
+                </On>
+              </Join>
+            </Joins>
+            <Filters>
+              <Filter Operator="=">
+                <ColumnExpression ColumnOwner="DimEmployee" ColumnName="SalesPersonFlag" />
+                <FilterValue>True</FilterValue>
+              </Filter>
+              <Filter Operator="=" Param="True">
+                <ColumnExpression ColumnOwner="DimEmployee" ColumnName="EmployeeKey" />
+              </Filter>
+            </Filters>
+          </QueryDefinition>
+        </rd:DesignerState>
+        <CommandText>SELECT
+    DimEmployee.EmployeeKey
+    ,DimEmployee.FirstName
+    ,DimEmployee.LastName
+    ,DimEmployee.Title
+    ,DimEmployee.EmailAddress
+    ,DimEmployee.Phone
+    ,DimEmployee.EmployeePhoto
+    ,DimSalesTerritory.SalesTerritoryRegion
+    ,DimSalesTerritory.SalesTerritoryGroup
+FROM
+    DimSalesTerritory
+    INNER JOIN DimEmployee
+        ON DimSalesTerritory.SalesTerritoryKey = DimEmployee.SalesTerritoryKey
+WHERE
+    DimEmployee.SalesPersonFlag = N'True'
+    AND (DimEmployee.EmployeeKey IN (@EmployeeKey ))
+    AND DimSalesTerritory.SalesTerritoryGroup = @SalesTerritoryGroup</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="Salesperson">
+          <Value>=StrConv(Fields!FirstName.Value, vbProperCase) &amp; " " &amp; StrConv(Fields!LastName.Value, vbProperCase)</Value>
+        </Field>
+        <Field Name="EmployeeKey">
+          <rd:TypeName>System.Int32</rd:TypeName>
+          <DataField>EmployeeKey</DataField>
+        </Field>
+        <Field Name="GroupRegion">
+          <Value>=Fields!SalesTerritoryGroup.Value &amp; ":" &amp; Fields!SalesTerritoryRegion.Value</Value>
+        </Field>
+        <Field Name="FirstName">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>FirstName</DataField>
+        </Field>
+        <Field Name="LastName">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>LastName</DataField>
+        </Field>
+        <Field Name="Title">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>Title</DataField>
+        </Field>
+        <Field Name="EmailAddress">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>EmailAddress</DataField>
+        </Field>
+        <Field Name="Phone">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>Phone</DataField>
+        </Field>
+        <Field Name="EmployeePhoto">
+          <rd:TypeName>System.Byte[]</rd:TypeName>
+          <DataField>EmployeePhoto</DataField>
+        </Field>
+        <Field Name="SalesTerritoryRegion">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>SalesTerritoryRegion</DataField>
+        </Field>
+        <Field Name="SalesTerritoryGroup">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>SalesTerritoryGroup</DataField>
+        </Field>
+      </Fields>
+    </DataSet>
+    <DataSet Name="dsSalesPerson">
+      <Query>
+        <DataSourceName>AdventureWorksDW2019</DataSourceName>
+        <QueryParameters>
+          <QueryParameter Name="@SalesTerritoryGroup">
+            <Value>=Parameters!SalesTerritoryGroup.Value</Value>
+          </QueryParameter>
+        </QueryParameters>
+        <CommandText>SELECT
+    [e].[EmployeeKey]
+    ,[e].[FirstName] + N' ' + [e].[LastName] AS [SalespersonName]
+FROM
+    [dbo].[DimEmployee] AS [e]
+    INNER JOIN [dbo].[DimSalesTerritory] AS [st]
+        ON [st].[SalesTerritoryKey] = [e].[SalesTerritoryKey]
+WHERE
+    [e].[SalesPersonFlag] = 1
+    AND [st].[SalesTerritoryGroup] = @SalesTerritoryGroup
+ORDER BY
+    [SalespersonName];</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="EmployeeKey">
+          <rd:TypeName>System.Int32</rd:TypeName>
+          <DataField>EmployeeKey</DataField>
+        </Field>
+        <Field Name="SalespersonName">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>SalespersonName</DataField>
+        </Field>
+      </Fields>
+    </DataSet>
+    <DataSet Name="dsSalesTerritoryGroups">
+      <Query>
+        <DataSourceName>AdventureWorksDW2019</DataSourceName>
+        <CommandText>SELECT DISTINCT
+    [SalesTerritoryGroup]
+FROM
+    [dbo].[DimSalesTerritory]
+ORDER BY
+    [SalesTerritoryGroup];</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="SalesTerritoryGroup">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>SalesTerritoryGroup</DataField>
+        </Field>
+      </Fields>
+    </DataSet>
+  </DataSets>
+  <ReportSections>
+    <ReportSection>
+      <Body>
+        <ReportItems>
+          <Tablix Name="Tablix1">
+            <TablixBody>
+              <TablixColumns>
+                <TablixColumn>
+                  <Width>7.5in</Width>
+                </TablixColumn>
+              </TablixColumns>
+              <TablixRows>
+                <TablixRow>
+                  <Height>1.56646in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Rectangle Name="Rectangle1">
+                          <ReportItems>
+                            <Textbox Name="Salesperson">
+                              <rd:DefaultName>Salesperson</rd:DefaultName>
+                              <CanGrow>true</CanGrow>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>=Fields!Salesperson.Value</Value>
+                                      <Style>
+                                        <FontFamily>Calibri</FontFamily>
+                                        <FontSize>18pt</FontSize>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style />
+                                </Paragraph>
+                              </Paragraphs>
+                              <Top>0in</Top>
+                              <Left>1.2in</Left>
+                              <Height>0.3in</Height>
+                              <Width>6.3in</Width>
+                              <Style>
+                                <Border>
+                                  <Style>None</Style>
+                                </Border>
+                                <PaddingLeft>2pt</PaddingLeft>
+                                <PaddingRight>2pt</PaddingRight>
+                                <PaddingTop>2pt</PaddingTop>
+                                <PaddingBottom>2pt</PaddingBottom>
+                              </Style>
+                            </Textbox>
+                            <Textbox Name="Title">
+                              <rd:DefaultName>Title</rd:DefaultName>
+                              <CanGrow>true</CanGrow>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>=Fields!Title.Value</Value>
+                                      <Style>
+                                        <FontFamily>Calibri</FontFamily>
+                                        <FontSize>12pt</FontSize>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style />
+                                </Paragraph>
+                              </Paragraphs>
+                              <Top>0.57083in</Top>
+                              <Left>1.2in</Left>
+                              <Height>0.20312in</Height>
+                              <Width>6.3in</Width>
+                              <ZIndex>1</ZIndex>
+                              <Style>
+                                <Border>
+                                  <Style>None</Style>
+                                </Border>
+                                <PaddingLeft>2pt</PaddingLeft>
+                                <PaddingRight>2pt</PaddingRight>
+                                <PaddingTop>2pt</PaddingTop>
+                                <PaddingBottom>2pt</PaddingBottom>
+                              </Style>
+                            </Textbox>
+                            <Textbox Name="Phone">
+                              <rd:DefaultName>Phone</rd:DefaultName>
+                              <CanGrow>true</CanGrow>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>=Fields!Phone.Value</Value>
+                                      <Style>
+                                        <FontFamily>Calibri</FontFamily>
+                                        <FontSize>12pt</FontSize>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style />
+                                </Paragraph>
+                              </Paragraphs>
+                              <Top>0.81562in</Top>
+                              <Left>1.2in</Left>
+                              <Height>0.19271in</Height>
+                              <Width>6.3in</Width>
+                              <ZIndex>2</ZIndex>
+                              <Style>
+                                <Border>
+                                  <Style>None</Style>
+                                </Border>
+                                <PaddingLeft>2pt</PaddingLeft>
+                                <PaddingRight>2pt</PaddingRight>
+                                <PaddingTop>2pt</PaddingTop>
+                                <PaddingBottom>2pt</PaddingBottom>
+                              </Style>
+                            </Textbox>
+                            <Textbox Name="GroupRegion">
+                              <rd:DefaultName>GroupRegion</rd:DefaultName>
+                              <CanGrow>true</CanGrow>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>=Fields!GroupRegion.Value</Value>
+                                      <Style>
+                                        <FontFamily>Calibri</FontFamily>
+                                        <FontSize>12pt</FontSize>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style />
+                                </Paragraph>
+                              </Paragraphs>
+                              <Top>0.34167in</Top>
+                              <Left>1.2in</Left>
+                              <Height>0.22917in</Height>
+                              <Width>6.3in</Width>
+                              <ZIndex>3</ZIndex>
+                              <Style>
+                                <Border>
+                                  <Style>None</Style>
+                                </Border>
+                                <PaddingLeft>2pt</PaddingLeft>
+                                <PaddingRight>2pt</PaddingRight>
+                                <PaddingTop>2pt</PaddingTop>
+                                <PaddingBottom>2pt</PaddingBottom>
+                              </Style>
+                            </Textbox>
+                            <Image Name="Image2">
+                              <Source>Database</Source>
+                              <Value>=Fields!EmployeePhoto.Value</Value>
+                              <MIMEType>image/jpeg</MIMEType>
+                              <Sizing>FitProportional</Sizing>
+                              <Top>0in</Top>
+                              <Left>0in</Left>
+                              <Height>1.44146in</Height>
+                              <Width>1in</Width>
+                              <ZIndex>4</ZIndex>
+                              <Style>
+                                <Border>
+                                  <Style>None</Style>
+                                </Border>
+                              </Style>
+                            </Image>
+                            <Textbox Name="EmailAddress">
+                              <rd:DefaultName>EmailAddress</rd:DefaultName>
+                              <CanGrow>true</CanGrow>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>=Fields!EmailAddress.Value</Value>
+                                      <Style>
+                                        <FontFamily>Calibri</FontFamily>
+                                        <FontSize>12pt</FontSize>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style />
+                                </Paragraph>
+                              </Paragraphs>
+                              <Top>1.06389in</Top>
+                              <Left>1.2in</Left>
+                              <Height>0.20312in</Height>
+                              <Width>6.3in</Width>
+                              <ZIndex>5</ZIndex>
+                              <Style>
+                                <Border>
+                                  <Style>None</Style>
+                                </Border>
+                                <PaddingLeft>2pt</PaddingLeft>
+                                <PaddingRight>2pt</PaddingRight>
+                                <PaddingTop>2pt</PaddingTop>
+                                <PaddingBottom>2pt</PaddingBottom>
+                              </Style>
+                            </Textbox>
+                            <Line Name="Line1">
+                              <Top>1.44146in</Top>
+                              <Left>1.2in</Left>
+                              <Height>0in</Height>
+                              <Width>6.25646in</Width>
+                              <ZIndex>6</ZIndex>
+                              <Style>
+                                <Border>
+                                  <Style>Solid</Style>
+                                </Border>
+                              </Style>
+                            </Line>
+                          </ReportItems>
+                          <KeepTogether>true</KeepTogether>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                          </Style>
+                        </Rectangle>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+              </TablixRows>
+            </TablixBody>
+            <TablixColumnHierarchy>
+              <TablixMembers>
+                <TablixMember />
+              </TablixMembers>
+            </TablixColumnHierarchy>
+            <TablixRowHierarchy>
+              <TablixMembers>
+                <TablixMember>
+                  <Group Name="Details" />
+                </TablixMember>
+              </TablixMembers>
+            </TablixRowHierarchy>
+            <DataSetName>dsMain</DataSetName>
+            <SortExpressions>
+              <SortExpression>
+                <Value>=Fields!Salesperson.Value</Value>
+              </SortExpression>
+            </SortExpressions>
+            <Top>0in</Top>
+            <Left>0in</Left>
+            <Height>1.56646in</Height>
+            <Width>7.5in</Width>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Tablix>
+        </ReportItems>
+        <Height>1.6in</Height>
+        <Style>
+          <Border>
+            <Style>None</Style>
+          </Border>
+        </Style>
+      </Body>
+      <Width>7.5in</Width>
+      <Page>
+        <PageHeader>
+          <Height>1in</Height>
+          <PrintOnFirstPage>true</PrintOnFirstPage>
+          <PrintOnLastPage>true</PrintOnLastPage>
+          <ReportItems>
+            <Textbox Name="ReportTitle">
+              <rd:WatermarkTextbox>Title</rd:WatermarkTextbox>
+              <rd:DefaultName>ReportTitle</rd:DefaultName>
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>=Globals!ReportName</Value>
+                      <Style>
+                        <FontFamily>Segoe UI Light</FontFamily>
+                        <FontSize>20pt</FontSize>
+                        <FontWeight>Bold</FontWeight>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style />
+                </Paragraph>
+              </Paragraphs>
+              <Top>0in</Top>
+              <Left>0in</Left>
+              <Height>0.5in</Height>
+              <Width>6.5in</Width>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+                <BottomBorder>
+                  <Color>Black</Color>
+                  <Style>Solid</Style>
+                  <Width>1pt</Width>
+                </BottomBorder>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+            <Textbox Name="Subtitle">
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>=Parameters!SalesTerritoryGroup.Value  &amp; Iif(Parameters!EmployeeKey.Count = CountRows("dsSalesPerson"), "", " - " &amp; Join(Parameters!EmployeeKey.Label, ", "))</Value>
+                      <Style />
+                    </TextRun>
+                  </TextRuns>
+                  <Style />
+                </Paragraph>
+              </Paragraphs>
+              <Top>0.5in</Top>
+              <Left>0in</Left>
+              <Height>0.25in</Height>
+              <Width>6.5in</Width>
+              <ZIndex>1</ZIndex>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+            <Image Name="AdventureWorksLogo">
+              <Source>Embedded</Source>
+              <Value>adventure_logo</Value>
+              <Sizing>FitProportional</Sizing>
+              <Top>0in</Top>
+              <Left>6.5in</Left>
+              <Height>0.98611in</Height>
+              <Width>1in</Width>
+              <ZIndex>2</ZIndex>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+              </Style>
+            </Image>
+          </ReportItems>
+          <Style>
+            <Border>
+              <Style>None</Style>
+            </Border>
+          </Style>
+        </PageHeader>
+        <PageFooter>
+          <Height>0.5in</Height>
+          <PrintOnFirstPage>true</PrintOnFirstPage>
+          <PrintOnLastPage>true</PrintOnLastPage>
+          <ReportItems>
+            <Textbox Name="ExecutionTime">
+              <rd:DefaultName>ExecutionTime</rd:DefaultName>
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>="Generated at " &amp; Format(Globals!ExecutionTime,"MM/dd/yyyy HH:mm:ss") &amp;  " UTC" &amp; vbCrLf &amp; " Page " &amp; Globals!PageNumber &amp; " of " &amp; Globals!TotalPages</Value>
+                      <Style />
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Left</TextAlign>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <Top>0.1in</Top>
+              <Left>0in</Left>
+              <Height>0.4in</Height>
+              <Width>7.5in</Width>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+                <TopBorder>
+                  <Style>Solid</Style>
+                </TopBorder>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+          </ReportItems>
+          <Style>
+            <Border>
+              <Style>None</Style>
+            </Border>
+          </Style>
+        </PageFooter>
+        <LeftMargin>0.5in</LeftMargin>
+        <RightMargin>0.5in</RightMargin>
+        <TopMargin>0.5in</TopMargin>
+        <BottomMargin>0.5in</BottomMargin>
+        <ColumnSpacing>0.13cm</ColumnSpacing>
+        <Style />
+      </Page>
+    </ReportSection>
+  </ReportSections>
+  <ReportParameters>
+    <ReportParameter Name="SalesTerritoryGroup">
+      <DataType>String</DataType>
+      <Prompt>Sales Territory Group</Prompt>
+      <ValidValues>
+        <DataSetReference>
+          <DataSetName>dsSalesTerritoryGroups</DataSetName>
+          <ValueField>SalesTerritoryGroup</ValueField>
+          <LabelField>SalesTerritoryGroup</LabelField>
+        </DataSetReference>
+      </ValidValues>
+      <cl:ComponentMetadata>
+        <cl:HideUpdateNotifications>true</cl:HideUpdateNotifications>
+      </cl:ComponentMetadata>
+    </ReportParameter>
+    <ReportParameter Name="EmployeeKey">
+      <DataType>Integer</DataType>
+      <DefaultValue>
+        <DataSetReference>
+          <DataSetName>dsSalesPerson</DataSetName>
+          <ValueField>EmployeeKey</ValueField>
+        </DataSetReference>
+      </DefaultValue>
+      <Prompt>Sales Person: </Prompt>
+      <ValidValues>
+        <DataSetReference>
+          <DataSetName>dsSalesPerson</DataSetName>
+          <ValueField>EmployeeKey</ValueField>
+          <LabelField>SalespersonName</LabelField>
+        </DataSetReference>
+      </ValidValues>
+      <MultiValue>true</MultiValue>
+      <cl:ComponentMetadata>
+        <cl:HideUpdateNotifications>true</cl:HideUpdateNotifications>
+      </cl:ComponentMetadata>
+    </ReportParameter>
+  </ReportParameters>
+  <ReportParametersLayout>
+    <GridLayoutDefinition>
+      <NumberOfColumns>4</NumberOfColumns>
+      <NumberOfRows>2</NumberOfRows>
+      <CellDefinitions>
+        <CellDefinition>
+          <ColumnIndex>0</ColumnIndex>
+          <RowIndex>0</RowIndex>
+          <ParameterName>SalesTerritoryGroup</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>1</ColumnIndex>
+          <RowIndex>0</RowIndex>
+          <ParameterName>EmployeeKey</ParameterName>
+        </CellDefinition>
+      </CellDefinitions>
+    </GridLayoutDefinition>
+  </ReportParametersLayout>
+  <EmbeddedImages>
+    <EmbeddedImage Name="adventure_logo">
+      <MIMEType>image/png</MIMEType>
+      <ImageData>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</ImageData>
+    </EmbeddedImage>
+  </EmbeddedImages>
+</Report>
